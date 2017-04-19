@@ -1,0 +1,167 @@
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: Payments
+  description: >-
+    Process payments
+host: dev-api.ypcloud.io
+basePath: /payment
+schemes:
+  - https
+paths:
+  /payments:
+    post:
+      description: |
+        Process a payment
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Payment information
+          schema:
+            $ref: '#/definitions/payment'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: Response
+            type: object
+            properties:
+              result:
+                type: boolean
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Payment id
+                  amount:
+                    type: string
+                    description: The dollar amount of the payment
+                  confirmation:
+                    type: string
+                    description: The confirmation message from payment driver
+                  cardNumber:
+                    type: string
+                    description: The last 4 digit of the credit card number. All other digits are masked with stars (i.e., *)
+                  expiry:
+                    type: string
+                    description: Card expiry in the format of MMYY
+                  externalId:
+                    type: string
+                  merchantName:
+                    type: string
+                  paymentStatus:
+                    type: string
+                    enum: ['approved', 'rejected']
+                  responseCode:
+                    type: string
+                    description: The response code from the payment driver
+                  responseMessage:
+                    type: string
+                    description: The message associated with the response code
+                  terminalId:
+                    type: string
+                    description: The id of the terminal where the payment was processed
+                  transactionDate:
+                    type: string
+                    description: Date of the payment in the format of yyyy-mm-dd
+                  transactionType:
+                    type: string
+                    description: Type of the transaciton, e.g., Purchase, Pre-authorization, etc.
+        '422':
+          description: Invalid request
+          schema:
+            title: Response
+            type: object
+            properties:
+              result:
+                type: boolean
+              errors:
+                type: object
+                properties:
+                  codes:
+                    type: array
+                    items:
+                      type: number
+                      description: Error codes
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      description: Error details
+                      properties:
+                        code:
+                          type: number
+                          description: Error code
+                        message:
+                          type: string
+                          description: Error message
+        '500':
+          description: Internal Server Error
+          examples:
+            application/json:
+              result: false
+              errors:
+                codes:
+                  - 500
+                details:
+                  - code: 500
+                    message: Internal Error
+          schema:
+            title: Response
+            type: object
+            properties:
+              result:
+                type: boolean
+              errors:
+                type: object
+                properties:
+                  codes:
+                    type: array
+                    items:
+                      type: number
+                      description: Error codes
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      description: Error details
+                      properties:
+                        code:
+                          type: number
+                          description: Error code
+                        message:
+                          type: string
+                          description: Error message
+definitions:
+  payment:
+    type: object
+    description: Payment information.
+    properties:
+      externalId:
+        type: string
+        description: External payable ID
+      amount:
+        type: string
+        description: Amount to pay
+      creditCardInformation:
+        type: object
+        properties:
+          ccName:
+            type: string
+            description: Credit Card Name
+          ccNumber:
+            type: string
+            description: Credit Card Number
+          cvv:
+            type: string
+            description: Credit Card security number
+          expirationMonth:
+            type: string
+            description: Expiration Month
+          expirationYear:
+            type: string
+            description: Expiration Year
+

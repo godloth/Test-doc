@@ -1,0 +1,11 @@
+{
+  "generator-openapi-repo": {
+    "importExistingSpec": true,
+    "importedSpec": "./swagger.yaml",
+    "name": "Payment-test",
+    "repo": "godloth/Test-doc",
+    "splitSpec": true,
+    "samples": true,
+    "installSwaggerUI": true
+  }
+}
