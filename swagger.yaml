@@ -1,31 +1,242 @@
 swagger: '2.0'
 info:
   version: 0.0.1
-  title: Payments
-  description: >-
-    Process payments
+  title: Fulfillment Order
+  description: Fulfillment Orders api
 host: dev-api.ypcloud.io
-basePath: /payment
+basePath: /order
 schemes:
   - https
+externalDocs:
+  description: Open Readme file for more technical information
+  url: 'https://git.ypg.com/projects/DB2E/repos/bridge2cf/browse/README.md'
 paths:
-  /payments:
+  /orders:
     post:
-      description: |
-        Process a payment
+      description: >
+        ##### Submit an order to CF
+
+
+        ###### GSP order submission
+
+
+        ``````
+
+        cat submitOrder-gsp.json
+
+        {
+          "order": {
+            "orderNumber": "order-gsp-sample-demo",
+            "accountId": "587fd59d40aeb2ae5478f4aa",
+            "representantLogin": "lucieDuprat1",
+            "price" : "51800",
+            "products": [
+              {
+                "productCode": "GSP",
+                "price" : "51800",
+                "configuration": {
+                  "merchantId": "123456",
+                  "headingCode": "00061350",
+                  "directoryCode": "00701",
+                  "duration" : 12,
+                  "startDate" : "2017-02-05",
+                  "externalReservationNumber" : "154454"
+                }
+              }
+            ]
+          }
+        }
+
+
+        curl http://localhost:7002/orders -d @submitOrder-gsp.json  -H
+        'Content-type: application/json'
+
+
+        {
+          "result": true,
+          "data": {
+            "orderNumber": "order-gsp-sample-demo",
+            "price": "51800",
+            "accountId": "587fd59d40aeb2ae5478f4aa",
+            "representantLogin" : "lucieDuprat1",
+            "account": {
+              "servicingAccountId": "1-G8V-2424",
+              "contactId": "1-AUQSNJ",
+              "email": "fivestarlimo@shaw.ca",
+              "phoneNum": "2504723500",
+              "id": "587fd59d40aeb2ae5478f4aa"
+            },
+            "products": [
+              {
+                "productCode": "GSP",
+                "price": "51800",
+                "configuration": {
+                  "merchantId": "123456",
+                  "headingCode": "00061350",
+                  "directoryCode": "00701",
+                  "duration": 12,
+                  "startDate": "2017-02-05",
+                  "externalReservationNumber": "154454"
+                }
+              }
+            ]
+          }
+        }
+
+        ``````
+
+
+        ###### NetSync order submission
+
+
+        ``````
+
+        cat submitOrder.json
+
+        {
+          "order": {
+            "orderNumber": "order-netsync-sample",
+            "accountId": "585036d263b231c208f14af6",
+            "representantLogin": "lucieDuprat1",
+            "price" : "5000",
+            "products": [
+              {
+                "productCode": "PRESC",
+                "price" : "5000",
+                "configuration": {
+                  "merchantId": "123456",
+                  "headingCode": "00061350",
+                  "directoryCode": "00701",
+                  "startDate" : "2017-01-05"
+                }
+              }
+            ]
+          }
+        }
+
+
+
+        curl http://localhost:7002/orders -d @submitOrder.json  -H
+        'Content-type: application/json'
+
+
+        {
+          "result": true,
+          "data": {
+            "status": "pending",
+            "order": {
+              "orderNumber": "testremi 1615",
+              "accountId": "585036d263b231c208f14aea",
+              "representantLogin": "lucieDuprat1",
+              "products": [
+                {
+                  "productCode": "WEBE",
+                  "configuration": {
+                    "merchantId" : "123456",
+                    "headingCode": "00061350",
+                    "directoryCode": "00701"
+                  }
+                }
+              ]
+            },
+            "attempts": [
+
+            ],
+            "created": "2016-12-16T10:37:33.378Z",
+            "busy": false
+          }
+        }
+
+
+        ``````
+
+
+        ###### One-Page Website order submission
+
+
+        ``````
+
+        cat submitOrder-oweb.json
+
+        {
+          "order": {
+            "orderNumber": "order-owebe-sample",
+            "accountId": "587d3595c58f2f5bc803fe7b",
+            "representantLogin": "lucieDuprat1",
+            "price" : "2500",
+            "products": [
+              {
+                "productCode": "OWEBE",
+                "price" : "2500",
+                "configuration": {
+                  "merchantId": "123456",
+                  "headingCode": "00061350",
+                  "directoryCode": "00701",
+                  "duration" : 12,
+                  "startDate" : "2017-02-05",
+                  "specialCustomization" : "my special customization"
+                }
+              }
+            ]
+          }
+        }
+
+
+        curl http://localhost:7002/orders -d @submitOrder-oweb.json  -H
+        'Content-type: application/json'
+
+
+        {
+           "result":true,
+           "data":{
+              "orderNumber":"order-owebe-sample",
+              "price":"2500",
+              "accountId":"587d3595c58f2f5bc803fe7b",
+              "representantLogin": "lucieDuprat1",
+              "account":{
+                 "listingId":"ListingIdFromOneProfile",
+                 "servicingAccountId":"1-PXJM-499",
+                 "contactId":"1-LMBWOZ",
+                 "email":"bad126093@yp.ca",
+                 "phoneNum":"8193992134",
+                 "id":"587d3595c58f2f5bc803fe7b"
+              },
+              "products":[
+                 {
+                    "productCode":"OWEBE",
+                    "price":"2500",
+                    "configuration":{
+                       "merchantId": "123456",
+                       "headingCode":"00061350",
+                       "directoryCode":"00701",
+                       "duration":12,
+                       "startDate":"2017-02-05",
+                       "specialCustomization" : "my special customization"
+                    }
+                 }
+              ]
+           }
+        }
+
+        ``````
+      consumes:
+        - application/json
       produces:
         - application/json
       parameters:
-        - name: body
+        - name: order
           in: body
-          description: Payment information
+          description: Order to submit
           schema:
-            $ref: '#/definitions/payment'
+            type: object
+            properties:
+              order:
+                $ref: '#/definitions/orderToSubmit'
       responses:
-        '200':
-          description: Successful response
+        '201':
+          description: Success
           schema:
-            title: Response
+            title: Order
             type: object
             properties:
               result:
@@ -33,135 +244,455 @@ paths:
               data:
                 type: object
                 properties:
-                  id:
-                    type: string
-                    description: Payment id
-                  amount:
-                    type: string
-                    description: The dollar amount of the payment
-                  confirmation:
-                    type: string
-                    description: The confirmation message from payment driver
-                  cardNumber:
-                    type: string
-                    description: The last 4 digit of the credit card number. All other digits are masked with stars (i.e., *)
-                  expiry:
-                    type: string
-                    description: Card expiry in the format of MMYY
-                  externalId:
-                    type: string
-                  merchantName:
-                    type: string
-                  paymentStatus:
-                    type: string
-                    enum: ['approved', 'rejected']
-                  responseCode:
-                    type: string
-                    description: The response code from the payment driver
-                  responseMessage:
-                    type: string
-                    description: The message associated with the response code
-                  terminalId:
-                    type: string
-                    description: The id of the terminal where the payment was processed
-                  transactionDate:
-                    type: string
-                    description: Date of the payment in the format of yyyy-mm-dd
-                  transactionType:
-                    type: string
-                    description: Type of the transaciton, e.g., Purchase, Pre-authorization, etc.
-        '422':
-          description: Invalid request
+                  order:
+                    $ref: '#/definitions/orderFull'
+  '/orders/{orderNumber}':
+    parameters:
+      - name: orderNumber
+        in: path
+        type: string
+        required: true
+    get:
+      description: |
+        ##### Get a submitted order by the order number
+
+        ```
+        curl http://localhost:7002/orders/order-netsync-
+
+        {
+           "result":true,
+           "data":{
+              "_id":"585d2a86eee44c211407cb23",
+              "orderNumber":"order-netsync-sample",
+              "price":"5000",
+              "accountId":"585036d263b231c208f14af6",
+              "representantLogin": "lucieDuprat1",
+              "__v":0,
+              "account":{
+                 "id":"585036d263b231c208f14af6",
+                 "phoneNum":"4038136356",
+                 "email":"joelglasser79@gmail.com",
+                 "contactId":"ContactIdFromOneProfile",
+                 "servicingAccountId":"ServicingIdFromOneProfile"
+              },
+              "products":[
+                 {
+                    "productCode":"PRESC",
+                    "price":"5000",
+                    "configuration":{
+                       "merchantId": "123456",
+                       "headingCode":"00061350",
+                       "directoryCode":"00701",
+                       "startDate":"2017-01-05"
+                    },
+                    "_id":"585d2a86eee44c211407cb24"
+                 }
+              ]
+           }
+        }
+        ```
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
           schema:
-            title: Response
+            title: Order submitted
             type: object
             properties:
               result:
                 type: boolean
-              errors:
+              data:
                 type: object
                 properties:
-                  codes:
-                    type: array
-                    items:
-                      type: number
-                      description: Error codes
-                  details:
-                    type: array
-                    items:
-                      type: object
-                      description: Error details
-                      properties:
-                        code:
-                          type: number
-                          description: Error code
-                        message:
-                          type: string
-                          description: Error message
-        '500':
-          description: Internal Server Error
-          examples:
-            application/json:
-              result: false
-              errors:
-                codes:
-                  - 500
-                details:
-                  - code: 500
-                    message: Internal Error
+                  order:
+                    $ref: '#/definitions/orderFull'
+  /jobs:
+    get:
+      description: >
+        ##### Retrieve a job by order number and/or status
+
+        ```
+
+        curl
+        http://localhost:7002/jobs?orderNumber=testremi%201615&status=sentToCF
+
+
+        [
+          {
+            "result":true,
+            "data":{
+              "id":"585d2a86eee44c211407cb25",
+              "busy":true,
+              "created":"2016-12-23T13:45:42.723Z",
+              "availableForProcess":"2016-12-23T13:45:42.723Z",
+              "attempts":[
+                 {
+                    "statusFrom":"pending",
+                    "statusTo":"sentToCF",
+                    "timestamp":"2016-12-23T14:04:01.013Z"
+                 }
+              ],
+              "status":"sentToCF"
+            }
+          }
+        }
+
+        ```
+      produces:
+        - application/json
+      parameters:
+        - name: orderNumber
+          in: query
+          description: The order number associated with the job
+          required: false
+          type: string
+        - name: status
+          in: query
+          description: The current status of the job
+          required: false
+          type: string
+        - name: limit
+          in: query
+          description: The page size when use pagination
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: The number of jobs to skip when use pagination
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: Success
           schema:
-            title: Response
             type: object
             properties:
               result:
                 type: boolean
-              errors:
-                type: object
-                properties:
-                  codes:
-                    type: array
-                    items:
-                      type: number
-                      description: Error codes
-                  details:
-                    type: array
-                    items:
-                      type: object
-                      description: Error details
-                      properties:
-                        code:
-                          type: number
-                          description: Error code
-                        message:
-                          type: string
-                          description: Error message
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/job'
+  '/jobs/{id}':
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+    get:
+      description: |
+        ##### Retrieve a job by its id
+        ```
+        curl http://localhost:7002/jobs/585d2a86eee44c211407cb25
+
+
+        {
+           "result":true,
+           "data":{
+              "id":"585d2a86eee44c211407cb25",
+              "busy":true,
+              "created":"2016-12-23T13:45:42.723Z",
+              "availableForProcess":"2016-12-23T13:45:42.723Z",
+              "attempts":[
+                 {
+                    "statusFrom":"pending",
+                    "statusTo":"sentToCF",
+                    "timestamp":"2016-12-23T14:04:01.013Z"
+                 }
+              ],
+              "status":"pending"
+           }
+        }
+        ```
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: object
+            properties:
+              result:
+                type: boolean
+              data:
+                $ref: '#/definitions/job'
+    put:
+      description: >
+        ##### Update a job that has already been created
+
+        ```
+
+        cat updateJob.json
+
+        {
+          "job": {
+              "id":"585d2a86eee44c211407cb25",
+              "busy":true,
+              "availableForProcess":"2016-12-23T13:45:42.723Z",
+              "attempts":[
+                 {
+                    "statusFrom":"pending",
+                    "statusTo":"sentToCF",
+                    "timestamp":"2016-12-23T14:04:01.013Z"
+                 }
+              ],
+              "status":"pending"
+          }
+        }
+
+        curl http://localhost:7002/orders/585d2a86eee44c211407cb25 -X PUT -d
+        @updateJob.json  -H 'Content-type: application/json'
+
+
+        {
+          "result": true,
+          "data": {
+              "id":"585d2a86eee44c211407cb25",
+              "busy":true,
+              "created":"2016-12-23T13:45:42.723Z",
+              "availableForProcess":"2016-12-23T13:45:42.723Z",
+              "attempts":[
+                 {
+                    "statusFrom":"pending",
+                    "statusTo":"sentToCF",
+                    "timestamp":"2016-12-23T14:04:01.013Z"
+                 }
+              ],
+              "status":"pending"
+          }
+        }
+
+        ```
+      parameters:
+        - name: job
+          in: body
+          schema:
+            type: object
+            properties:
+              job:
+                $ref: '#/definitions/job'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: object
+            properties:
+              result:
+                type: boolean
+              data:
+                $ref: '#/definitions/job'
 definitions:
-  payment:
+  orderNumber:
+    type: string
+    description: Order number in the system invoking this API.
+  accountId:
+    type: string
+    description: >-
+      Id of the account to do the order for. Only one of accountId, locationId,
+      or brandId should be used
+  locationId:
+    type: string
+    description: >-
+      Id of the location to do the order for. Only one of accountId, locationId,
+      or brandId should be used
+  brandId:
+    type: string
+    description: >-
+      Id of the brand to do the order for. Only one of accountId, locationId, or
+      brandId should be used
+  priority:
+    type: integer
+    description: Priority of the order. 1-9.
+  representantLogin:
+    type: string
+    description: Login of the representant who made the sale.
+  price:
+    type: string
+    description: 'Price shown to the customer for the total order, multiplied by 100'
+  cfProposalId:
+    type: string
+    description: CF internal Id once the order has been submitted in CF.
+  account:
     type: object
-    description: Payment information.
     properties:
-      externalId:
+      id:
         type: string
-        description: External payable ID
-      amount:
+        description: The account id in One Profile
+      email:
         type: string
-        description: Amount to pay
-      creditCardInformation:
+        description: Email address of the merchant
+      phoneNum:
+        type: string
+        description: The phone number of the merchant
+      contactId:
+        type: string
+        description: The servicing contact id of the account
+      servicingAccountId:
+        type: string
+        description: The servicing account id of the account
+  productCore:
+    type: object
+    properties:
+      productCode:
+        type: string
+      price:
+        type: string
+        description: 'Price shown to the customer, multiplied by 100'
+      configuration:
         type: object
         properties:
-          ccName:
+          merchantId:
             type: string
-            description: Credit Card Name
-          ccNumber:
+          headingCode:
             type: string
-            description: Credit Card Number
-          cvv:
+          directoryCode:
             type: string
-            description: Credit Card security number
-          expirationMonth:
+          languageCode:
             type: string
-            description: Expiration Month
-          expirationYear:
+          startDate:
             type: string
-            description: Expiration Year
-
+            format: date
+          duration:
+            type: integer
+            description: Duration of the product in months
+          externalReservationNumber:
+            type: string
+            description: 'Reservation number in external system (e.g., AC)'
+          specialCustomization:
+            type: string
+            description: Special Customization of product
+          promoText:
+            type: string
+            description: Promo text of the placement product
+        required:
+          - merchantId
+          - headingCode
+          - directoryCode
+          - languageCode
+          - startDate
+          - duration
+        additionalProperties: true
+  addOns:
+    type: array
+    items:
+      $ref: '#/definitions/productCore'
+  product:
+    allOf:
+      - $ref: '#/definitions/productCore'
+      - properties:
+          addOns:
+            $ref: '#/definitions/addOns'
+        required:
+          - addOns
+  products:
+    type: array
+    items:
+      $ref: '#/definitions/product'
+  orderToSubmit:
+    type: object
+    properties:
+      orderNumber:
+        $ref: '#/definitions/orderNumber'
+      accountId:
+        $ref: '#/definitions/accountId'
+      locationId:
+        $ref: '#/definitions/locationId'
+      brandId:
+        $ref: '#/definitions/brandId'
+      priority:
+        $ref: '#/definitions/priority'
+      representantLogin:
+        $ref: '#/definitions/representantLogin'
+      price:
+        $ref: '#/definitions/price'
+      products:
+        $ref: '#/definitions/products'
+    required:
+      - orderNumber
+      - accountId
+      - priority
+      - price
+      - products
+  orderFull:
+    type: object
+    properties:
+      orderNumber:
+        $ref: '#/definitions/orderNumber'
+      accountId:
+        $ref: '#/definitions/accountId'
+      locationId:
+        $ref: '#/definitions/locationId'
+      brandId:
+        $ref: '#/definitions/brandId'
+      priority:
+        $ref: '#/definitions/priority'
+      representantLogin:
+        $ref: '#/definitions/representantLogin'
+      price:
+        $ref: '#/definitions/price'
+      account:
+        $ref: '#/definitions/account'
+      cfProposalId:
+        $ref: '#/definitions/cfProposalId'
+      products:
+        $ref: '#/definitions/products'
+  job:
+    type: object
+    properties:
+      id:
+        type: string
+        description: The job id in mongo database
+      orderId:
+        type: string
+        description: >-
+          The object id in mongo database for the order that this job is
+          associated with
+      busy:
+        type: boolean
+      created:
+        type: string
+        description: Time stamp of the moment that this job gets created
+      availableForProcess:
+        type: string
+        description: >-
+          The minimum date and time at which the job will be available to be
+          processed by the system
+      attempts:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The id of the attempt
+            statusFrom:
+              type: string
+              enum:
+                - pending
+                - sentToCF
+                - internalErrorCF
+            statusTo:
+              type: string
+              enum:
+                - sentToCF
+                - completed
+                - badRequestCF
+                - internalErrorCF
+                - manualCheckNeeded
+            message:
+              type: string
+            timestamp:
+              type: string
+            duration:
+              type: integer
+              description: >-
+                duration in milliseconds of the attempt. undefined means an
+                error occurred during the attempt.
+      status:
+        type: string
+        description: The current status of the job
